@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="MyBookHub — Your premier digital book publishing platform. Discover, read and download thousands of books."/>
+<title>MyBookHub — Digital Publishing Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   RESET & VARIABLES
+═══════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#110d07;
+  --ink-soft:#2c2016;
+  --parchment:#faf5ec;
+  --cream:#f2e8d5;
+  --cream2:#ede0c8;
+  --amber:#b8731a;
+  --amber2:#d4892a;
+  --amber3:#f0a93a;
+  --amber-pale:#fdf0d8;
+  --gold:#c9a227;
+  --teal:#1a5c5a;
+  --teal2:#237a77;
+  --rust:#b83a1a;
+  --slate:#2a3d4a;
+  --slate2:#3d5566;
+  --white:#ffffff;
+  --shadow1:0 2px 8px rgba(17,13,7,.07);
+  --shadow2:0 8px 28px rgba(17,13,7,.11);
+  --shadow3:0 20px 60px rgba(17,13,7,.16);
+  --r:10px;
+  --r2:18px;
+  --trans:.25s cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;background:var(--parchment);color:var(--ink);overflow-x:hidden;line-height:1.6}
+img{max-width:100%;display:block}
+button{font-family:'Jost',sans-serif;cursor:pointer}
+input,select,textarea{font-family:'Jost',sans-serif}
+h1,h2,h3,h4,h5{font-family:'Cormorant Garamond',serif;line-height:1.15}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--cream)}
+::-webkit-scrollbar-thumb{background:var(--amber);border-radius:3px}
+
+/* ═══════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════ */
+.hidden{display:none!important}
+.page{display:none}
+.page.active{display:block}
+.container{max-width:1260px;margin:0 auto;padding:0 2rem}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(-3deg)}}
+@keyframes float2{0%,100%{transform:translateY(0) rotate(4deg)}50%{transform:translateY(-8px) rotate(4deg)}}
+@keyframes float3{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(1deg)}}
+@keyframes shimmer{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseGold{0%,100%{box-shadow:0 0 0 0 rgba(201,162,39,.4)}70%{box-shadow:0 0 0 10px rgba(201,162,39,0)}}
+
+.anim-fadeup{animation:fadeUp .55s ease both}
+.anim-fadein{animation:fadeIn .4s ease both}
+.anim-scalein{animation:scaleIn .35s ease both}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}.d5{animation-delay:.5s}.d6{animation-delay:.6s}
+
+/* ═══════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════ */
+#navbar{
+  position:sticky;top:0;z-index:500;
+  background:rgba(17,13,7,.96);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(184,115,26,.18);
+}
+.nav-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  height:66px;max-width:1260px;margin:0 auto;padding:0 2rem;gap:1rem;
+}
+.nav-brand{display:flex;align-items:center;gap:.7rem;cursor:pointer;text-decoration:none}
+.nav-brand-icon{
+  width:38px;height:38px;border-radius:8px;
+  background:linear-gradient(135deg,var(--amber2),var(--amber));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;flex-shrink:0;
+}
+.nav-brand-name{
+  font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:700;
+  color:var(--parchment);letter-spacing:-.3px;
+}
+.nav-brand-name span{color:var(--amber3)}
+.nav-links{display:flex;align-items:center;gap:.1rem}
+.nav-link{
+  padding:.45rem .9rem;color:rgba(250,245,236,.65);font-size:.875rem;
+  font-weight:500;background:none;border:none;border-radius:6px;
+  transition:all var(--trans);white-space:nowrap;
+}
+.nav-link:hover,.nav-link.active{color:var(--parchment);background:rgba(184,115,26,.14)}
+.nav-link.active{color:var(--amber3)}
+.nav-actions{display:flex;align-items:center;gap:.6rem}
+.nav-btn{
+  padding:.48rem 1.15rem;border-radius:7px;font-size:.86rem;font-weight:600;
+  border:none;transition:all var(--trans);
+}
+.nav-btn-ghost{
+  background:transparent;color:rgba(250,245,236,.75);
+  border:1.5px solid rgba(250,245,236,.18);
+}
+.nav-btn-ghost:hover{color:var(--parchment);border-color:rgba(184,115,26,.5);background:rgba(184,115,26,.1)}
+.nav-btn-solid{
+  background:linear-gradient(135deg,var(--amber2),var(--amber));
+  color:var(--white);
+}
+.nav-btn-solid:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(184,115,26,.45)}
+.nav-menu-toggle{display:none;background:none;border:none;color:var(--parchment);font-size:1.4rem;padding:.3rem}
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+#hero{
+  background:linear-gradient(160deg,#0e0904 0%,#1c1208 45%,#1a2016 100%);
+  min-height:88vh;display:flex;align-items:center;position:relative;overflow:hidden;
+  padding:5rem 0 4rem;
+}
+.hero-bg-mesh{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 60% at 15% 55%,rgba(184,115,26,.09) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 85% 25%,rgba(26,92,90,.12) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 40% at 60% 80%,rgba(184,115,26,.06) 0%,transparent 50%);
+}
+.hero-grid-lines{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(184,115,26,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(184,115,26,.035) 1px,transparent 1px);
+  background-size:64px 64px;
+}
+.hero-inner{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:.55rem;
+  padding:.38rem 1rem;margin-bottom:1.6rem;
+  background:rgba(184,115,26,.1);border:1px solid rgba(184,115,26,.22);
+  border-radius:100px;color:var(--amber3);font-size:.78rem;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+}
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber3);animation:shimmer 2s ease-in-out infinite}
+.hero-h1{
+  font-size:clamp(3rem,5.5vw,4.8rem);color:var(--parchment);
+  margin-bottom:1.4rem;font-weight:700;
+}
+.hero-h1 em{font-style:italic;color:var(--amber3)}
+.hero-p{
+  font-size:1.1rem;color:rgba(250,245,236,.58);line-height:1.75;
+  max-width:480px;margin-bottom:2.5rem;font-weight:300;
+}
+.hero-cta{display:flex;gap:.9rem;flex-wrap:wrap;margin-bottom:3.5rem}
+.btn-hero-primary{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.9rem 2.1rem;background:linear-gradient(135deg,var(--amber2),var(--amber));
+  color:var(--white);border:none;border-radius:9px;font-size:.95rem;font-weight:600;
+  transition:all var(--trans);letter-spacing:.01em;
+}
+.btn-hero-primary:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(184,115,26,.45)}
+.btn-hero-ghost{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.9rem 2.1rem;background:transparent;
+  color:rgba(250,245,236,.8);border:1.5px solid rgba(250,245,236,.2);
+  border-radius:9px;font-size:.95rem;font-weight:600;transition:all var(--trans);
+}
+.btn-hero-ghost:hover{border-color:var(--amber2);color:var(--amber3)}
+.hero-stats{display:flex;gap:2.5rem}
+.hero-stat-num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--amber3);line-height:1}
+.hero-stat-lbl{font-size:.78rem;color:rgba(250,245,236,.45);margin-top:.25rem;letter-spacing:.06em;text-transform:uppercase}
+
+/* Book tower visual */
+.hero-visual{position:relative;height:520px;display:flex;align-items:center;justify-content:center}
+.book-tower{position:relative;width:260px;height:400px}
+.book3d{
+  position:absolute;border-radius:6px;
+  box-shadow:-6px 6px 30px rgba(0,0,0,.6),4px 0 0 rgba(255,255,255,.05) inset;
+}
+.book3d-spine{position:absolute;left:0;top:0;width:14px;height:100%;background:rgba(0,0,0,.3);border-radius:3px 0 0 3px}
+.book3d:nth-child(1){width:180px;height:260px;top:100px;left:20px;background:linear-gradient(135deg,#6b2d0a,#c45a1a);animation:float 7s ease-in-out infinite}
+.book3d:nth-child(2){width:180px;height:260px;top:75px;left:45px;background:linear-gradient(135deg,#0a3d2d,#1a6a4a);animation:float2 6s ease-in-out infinite 1.5s}
+.book3d:nth-child(3){
+  width:185px;height:265px;top:50px;left:68px;
+  background:linear-gradient(135deg,#1a2d5a,#2a4a8a);
+  animation:float3 8s ease-in-out infinite .7s;
+  display:flex;align-items:center;justify-content:center;
+}
+.book3d-title{padding:1rem;text-align:center;font-family:'Cormorant Garamond',serif;color:rgba(255,255,255,.9);font-size:.9rem;font-style:italic;line-height:1.4}
+.hero-glow{position:absolute;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(184,115,26,.12) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.hero-badge{
+  position:absolute;bottom:60px;right:-20px;
+  width:90px;height:90px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--amber2));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(201,162,39,.4);animation:pulseGold 2.5s ease-in-out infinite;
+}
+.hero-badge-num{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--white);line-height:1}
+.hero-badge-lbl{font-size:.55rem;font-weight:600;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em}
+
+/* ═══════════════════════════════════════════
+   STATS STRIP
+═══════════════════════════════════════════ */
+#stats-strip{background:var(--white);border-bottom:1px solid var(--cream2)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat-cell{
+  padding:1.7rem 1rem;text-align:center;
+  border-right:1px solid var(--cream2);
+}
+.stat-cell:last-child{border-right:none}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:2.1rem;font-weight:700;color:var(--amber);line-height:1}
+.stat-lbl{font-size:.8rem;color:var(--slate2);margin-top:.3rem;letter-spacing:.04em}
+
+/* ═══════════════════════════════════════════
+   SEARCH BAR
+═══════════════════════════════════════════ */
+#search-section{padding:2.5rem 0 0}
+.search-wrap{
+  background:var(--white);border-radius:14px;
+  box-shadow:var(--shadow3);overflow:hidden;
+  display:flex;border:2px solid var(--cream2);
+  transition:border-color var(--trans);
+}
+.search-wrap:focus-within{border-color:var(--amber)}
+.search-icon{padding:0 1.2rem;font-size:1.1rem;display:flex;align-items:center;color:var(--amber)}
+.search-input{
+  flex:1;padding:1.05rem .5rem;border:none;outline:none;
+  font-size:1rem;color:var(--ink);background:transparent;font-weight:400;
+}
+.search-input::placeholder{color:rgba(42,61,74,.4)}
+.search-divider{width:1px;background:var(--cream2);margin:.6rem 0}
+.search-select{
+  padding:.5rem 1.3rem;border:none;outline:none;background:transparent;
+  font-size:.875rem;color:var(--slate);cursor:pointer;min-width:148px;font-weight:500;
+}
+.search-btn{
+  padding:0 2.2rem;background:linear-gradient(135deg,var(--amber2),var(--amber));
+  color:var(--white);border:none;font-size:.9rem;font-weight:600;
+  display:flex;align-items:center;gap:.45rem;transition:all var(--trans);
+}
+.search-btn:hover{background:linear-gradient(135deg,var(--amber3),var(--amber2))}
+
+/* ═══════════════════════════════════════════
+   SECTIONS
+═══════════════════════════════════════════ */
+.section{padding:4rem 0}
+.section-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.2rem}
+.section-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);margin-bottom:.5rem}
+.section-h2{font-size:clamp(1.7rem,3vw,2.4rem);color:var(--ink)}
+.section-h2 span{color:var(--amber)}
+.section-sub{font-size:.92rem;color:var(--slate2);margin-top:.35rem}
+.see-all{
+  background:none;border:1.5px solid var(--cream2);color:var(--slate2);
+  padding:.48rem 1.2rem;border-radius:7px;font-size:.85rem;font-weight:600;
+  transition:all var(--trans);white-space:nowrap;flex-shrink:0;
+}
+.see-all:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-pale)}
+
+/* ═══════════════════════════════════════════
+   CATEGORY PILLS
+═══════════════════════════════════════════ */
+.cat-pills{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:2.5rem}
+.cat-pill{
+  padding:.48rem 1.15rem;border-radius:100px;border:1.5px solid var(--cream2);
+  background:var(--white);color:var(--slate);font-size:.84rem;font-weight:500;
+  cursor:pointer;transition:all var(--trans);display:flex;align-items:center;gap:.35rem;
+}
+.cat-pill:hover{border-color:var(--amber2);color:var(--amber);transform:translateY(-1px)}
+.cat-pill.active{background:var(--amber);border-color:var(--amber);color:var(--white);transform:translateY(-1px);box-shadow:0 4px 14px rgba(184,115,26,.3)}
+
+/* ═══════════════════════════════════════════
+   BOOK GRID & CARDS
+═══════════════════════════════════════════ */
+.books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:1.6rem}
+.book-card{
+  background:var(--white);border-radius:var(--r2);overflow:hidden;
+  box-shadow:var(--shadow1);transition:all var(--trans);cursor:pointer;position:relative;
+}
+.book-card:hover{transform:translateY(-7px);box-shadow:var(--shadow3)}
+.book-card:hover .bc-overlay{opacity:1}
+
+.bc-cover{height:238px;position:relative;overflow:hidden}
+.bc-cover-img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
+.book-card:hover .bc-cover-img{transform:scale(1.04)}
+
+.bc-overlay{
+  position:absolute;inset:0;background:rgba(17,13,7,.62);
+  opacity:0;transition:opacity var(--trans);
+  display:flex;align-items:center;justify-content:center;gap:.6rem;
+}
+.bc-overlay-btn{
+  padding:.5rem 1.05rem;border-radius:7px;font-size:.8rem;font-weight:700;
+  border:none;cursor:pointer;transition:transform .15s;
+}
+.bc-overlay-btn:hover{transform:scale(1.06)}
+.bc-btn-read{background:var(--amber2);color:var(--white)}
+.bc-btn-save{background:rgba(255,255,255,.16);color:var(--white);border:1px solid rgba(255,255,255,.3)!important}
+
+.bc-badge{
+  position:absolute;top:.7rem;left:.7rem;
+  padding:.22rem .62rem;border-radius:100px;
+  font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+}
+.badge-new{background:var(--teal);color:var(--white)}
+.badge-hot{background:var(--rust);color:var(--white)}
+.badge-free{background:var(--teal2);color:var(--white)}
+.badge-paid{background:var(--slate);color:var(--white)}
+.badge-feat{background:var(--gold);color:var(--ink)}
+
+.bc-info{padding:.95rem 1.1rem 1.15rem}
+.bc-cat{font-size:.72rem;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.35rem}
+.bc-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:.28rem}
+.bc-author{font-size:.82rem;color:var(--slate2)}
+.bc-meta{display:flex;align-items:center;justify-content:space-between;margin-top:.7rem}
+.bc-stars{color:var(--gold);font-size:.75rem;letter-spacing:1px}
+.bc-rating{font-size:.82rem;color:var(--slate2);display:flex;align-items:center;gap:.3rem}
+.bc-dl{font-size:.75rem;color:var(--slate2)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:5rem 1rem;color:var(--slate2)}
+.empty-state-icon{font-size:3.5rem;margin-bottom:1rem;opacity:.5}
+.empty-state h3{font-size:1.4rem;color:var(--ink);margin-bottom:.5rem}
+
+/* ═══════════════════════════════════════════
+   FEATURED BOOK STRIP
+═══════════════════════════════════════════ */
+#featured-strip{
+  background:linear-gradient(135deg,#0e0904 0%,#1a140a 50%,#0e1a0e 100%);
+  padding:5rem 0;position:relative;overflow:hidden;
+}
+#featured-strip::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 80% at 20% 50%,rgba(184,115,26,.07),transparent 60%);
+}
+.featured-book{display:grid;grid-template-columns:280px 1fr;gap:3.5rem;align-items:center;position:relative;z-index:1}
+.featured-cover{
+  height:390px;border-radius:12px;overflow:hidden;
+  box-shadow:-10px 10px 40px rgba(0,0,0,.6),8px -4px 0 var(--amber);
+  position:relative;flex-shrink:0;
+}
+.featured-tag{
+  display:inline-block;padding:.32rem .9rem;background:var(--gold);
+  color:var(--ink);border-radius:100px;font-size:.75rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.07em;margin-bottom:1.1rem;
+}
+.featured-title{font-size:clamp(2rem,4vw,3rem);color:var(--parchment);margin-bottom:.6rem}
+.featured-author{font-size:1rem;color:rgba(250,245,236,.55);margin-bottom:1.1rem}
+.featured-desc{font-size:.93rem;color:rgba(250,245,236,.62);line-height:1.75;max-width:520px;margin-bottom:2rem;font-weight:300}
+.featured-actions{display:flex;gap:.9rem;flex-wrap:wrap;align-items:center}
+.featured-rating{display:flex;align-items:center;gap:.6rem;margin-left:auto}
+.featured-rating .stars{color:var(--gold);font-size:.9rem}
+.featured-rating span{color:rgba(250,245,236,.5);font-size:.85rem}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn{display:inline-flex;align-items:center;gap:.45rem;font-weight:600;border:none;border-radius:8px;transition:all var(--trans);cursor:pointer;font-family:'Jost',sans-serif}
+.btn-primary{padding:.78rem 1.8rem;background:linear-gradient(135deg,var(--amber2),var(--amber));color:var(--white);font-size:.92rem}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(184,115,26,.4)}
+.btn-secondary{padding:.78rem 1.8rem;background:var(--teal);color:var(--white);font-size:.92rem}
+.btn-secondary:hover{background:var(--teal2);transform:translateY(-1px)}
+.btn-outline{padding:.78rem 1.6rem;background:transparent;color:rgba(250,245,236,.8);border:1.5px solid rgba(250,245,236,.22);font-size:.92rem}
+.btn-outline:hover{border-color:var(--amber2);color:var(--amber3)}
+.btn-sm{padding:.52rem 1.1rem;font-size:.83rem;border-radius:7px}
+.btn-icon{padding:.6rem;border-radius:7px;background:var(--cream);color:var(--slate);border:none}
+.btn-icon:hover{background:var(--cream2);color:var(--amber)}
+
+/* ═══════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:800;
+  background:rgba(17,13,7,.78);backdrop-filter:blur(7px);
+  display:none;align-items:center;justify-content:center;padding:1rem;
+}
+.modal-overlay.open{display:flex;animation:fadeIn .22s ease}
+.modal{
+  background:var(--white);border-radius:22px;width:100%;max-width:920px;
+  max-height:92vh;overflow-y:auto;animation:scaleIn .3s ease;
+}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.4rem 2rem;border-bottom:1px solid var(--cream);position:sticky;top:0;
+  background:var(--white);z-index:2;
+}
+.modal-head h3{font-size:1.15rem}
+.modal-close{
+  width:34px;height:34px;border-radius:50%;background:var(--cream);
+  border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;
+  transition:all var(--trans);
+}
+.modal-close:hover{background:var(--amber);color:var(--white)}
+.modal-body{display:grid;grid-template-columns:230px 1fr;gap:2.2rem;padding:2rem}
+.modal-cover-wrap{height:320px;border-radius:12px;overflow:hidden;box-shadow:var(--shadow2)}
+.modal-info{}
+.modal-cat{font-size:.74rem;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.07em}
+.modal-title{font-size:1.85rem;color:var(--ink);margin:.4rem 0 .3rem;line-height:1.2}
+.modal-author{color:var(--slate2);font-size:.93rem;margin-bottom:1.2rem}
+.modal-rating-row{display:flex;align-items:center;gap:.85rem;margin-bottom:1.4rem;flex-wrap:wrap}
+.modal-desc{font-size:.9rem;color:var(--slate);line-height:1.78;margin-bottom:1.8rem;font-weight:300}
+.modal-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.modal-details-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;background:var(--cream);border-radius:10px;padding:1.1rem}
+.detail-item .lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--slate2);font-weight:700}
+.detail-item .val{font-size:.9rem;color:var(--ink);font-weight:500;margin-top:.18rem}
+
+/* Reviews inside modal */
+.reviews-wrap{padding:1.4rem 2rem 2rem;border-top:1px solid var(--cream)}
+.reviews-wrap h4{font-size:1.05rem;margin-bottom:1.2rem}
+.review-input-row{display:flex;gap:.7rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.star-pick{display:flex;gap:.2rem;align-items:center}
+.star-pick-btn{background:none;border:none;font-size:1.25rem;cursor:pointer;padding:.15rem;transition:transform .15s;color:#c8bfaf}
+.star-pick-btn.on,.star-pick-btn:hover{color:var(--gold);transform:scale(1.15)}
+.review-txt-input{flex:1;min-width:200px;padding:.68rem 1rem;border:1.5px solid var(--cream2);border-radius:8px;outline:none;font-size:.9rem;transition:border-color var(--trans)}
+.review-txt-input:focus{border-color:var(--amber)}
+.review-post-btn{padding:.68rem 1.3rem;background:var(--amber);color:var(--white);border:none;border-radius:8px;font-weight:600;font-size:.88rem;cursor:pointer;transition:all var(--trans);flex-shrink:0}
+.review-post-btn:hover{background:var(--amber2)}
+.review-card{background:var(--cream);border-radius:9px;padding:.9rem 1rem;margin-bottom:.7rem}
+.review-card-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.45rem}
+.rv-avatar{width:30px;height:30px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;color:var(--white);font-size:.78rem;font-weight:700;flex-shrink:0}
+.rv-name{font-weight:600;font-size:.87rem}
+.rv-date{font-size:.77rem;color:var(--slate2);margin-left:auto}
+.rv-stars{color:var(--gold);font-size:.75rem}
+.rv-text{font-size:.87rem;color:var(--slate);line-height:1.62;font-weight:300}
+
+/* ═══════════════════════════════════════════
+   PDF VIEWER
+═══════════════════════════════════════════ */
+#pdf-viewer{
+  position:fixed;inset:0;z-index:900;background:#0d0a05;
+  display:none;flex-direction:column;
+}
+#pdf-viewer.open{display:flex;animation:fadeIn .28s ease}
+.viewer-bar{
+  height:54px;background:rgba(13,10,5,.95);border-bottom:1px solid rgba(184,115,26,.18);
+  display:flex;align-items:center;padding:0 1.5rem;gap:1rem;flex-shrink:0;
+}
+.viewer-title-txt{font-family:'Cormorant Garamond',serif;color:var(--parchment);font-size:1rem;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.viewer-ctrl-btn{
+  padding:.38rem .85rem;background:rgba(184,115,26,.14);color:rgba(250,245,236,.8);
+  border:1px solid rgba(184,115,26,.22);border-radius:6px;font-size:.81rem;
+  font-weight:500;cursor:pointer;transition:all var(--trans);
+}
+.viewer-ctrl-btn:hover{background:rgba(184,115,26,.28);color:var(--parchment)}
+.viewer-ctrl-btn:disabled{opacity:.35;cursor:not-allowed}
+.viewer-close-btn{
+  padding:.38rem 1rem;background:var(--amber);color:var(--white);
+  border:none;border-radius:6px;font-size:.81rem;font-weight:600;cursor:pointer;
+}
+.viewer-page-info{font-size:.8rem;color:rgba(250,245,236,.4);padding:0 .5rem}
+.viewer-content{flex:1;overflow-y:auto;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1rem;background:#1a1408}
+.viewer-page{
+  background:var(--white);max-width:700px;width:100%;border-radius:4px;
+  box-shadow:0 4px 22px rgba(0,0,0,.5);padding:3.5rem 4rem;
+  font-size:.96rem;line-height:1.9;color:var(--ink);
+}
+.viewer-page h2{font-size:1.65rem;margin-bottom:1.2rem;font-weight:600}
+.viewer-page p{margin-bottom:1.1rem;font-weight:300}
+.viewer-page p:last-child{margin-bottom:0}
+.viewer-page .drop-cap::first-letter{
+  float:left;font-family:'Cormorant Garamond',serif;font-size:4rem;
+  line-height:.8;margin-right:.1em;color:var(--amber);font-weight:700;
+}
+
+/* ═══════════════════════════════════════════
+   AUTH PAGE
+═══════════════════════════════════════════ */
+#page-auth{
+  min-height:100vh;background:linear-gradient(150deg,#0e0904,#1c1208,#0e1a0e);
+  display:flex;align-items:center;justify-content:center;padding:2rem;
+}
+.auth-card{
+  background:var(--white);border-radius:22px;padding:2.8rem;
+  width:100%;max-width:430px;box-shadow:var(--shadow3);
+  animation:scaleIn .32s ease;
+}
+.auth-logo-wrap{text-align:center;margin-bottom:2rem}
+.auth-logo-icon{
+  width:58px;height:58px;border-radius:14px;
+  background:linear-gradient(135deg,var(--amber2),var(--amber));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;margin:0 auto .75rem;
+}
+.auth-title{font-size:1.7rem;color:var(--ink);margin-bottom:.35rem}
+.auth-sub{font-size:.88rem;color:var(--slate2);margin-bottom:2rem}
+.auth-form{display:flex;flex-direction:column;gap:1rem}
+.form-label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate);margin-bottom:.38rem;display:block}
+.form-input{
+  width:100%;padding:.75rem 1rem;border:1.5px solid var(--cream2);
+  border-radius:8px;outline:none;font-size:.93rem;color:var(--ink);
+  background:var(--white);transition:border-color var(--trans);
+}
+.form-input:focus{border-color:var(--amber)}
+.form-input::placeholder{color:rgba(42,61,74,.38)}
+.auth-err{color:var(--rust);font-size:.84rem;padding:.55rem .85rem;background:rgba(184,58,26,.07);border-radius:7px}
+.auth-submit{width:100%;padding:1rem;background:linear-gradient(135deg,var(--amber2),var(--amber));color:var(--white);border:none;border-radius:9px;font-size:.96rem;font-weight:700;cursor:pointer;transition:all var(--trans)}
+.auth-submit:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(184,115,26,.4)}
+.auth-switch{text-align:center;font-size:.86rem;color:var(--slate2);margin-top:1.3rem}
+.auth-switch span{color:var(--amber);font-weight:600;cursor:pointer}
+.auth-demo{text-align:center;margin-top:1.2rem;padding:.9rem;background:var(--cream);border-radius:9px;font-size:.8rem;color:var(--slate2)}
+
+/* ═══════════════════════════════════════════
+   ADMIN DASHBOARD
+═══════════════════════════════════════════ */
+#page-admin{
+  display:none;min-height:100vh;background:#ede8df;
+}
+#page-admin.active{display:grid;grid-template-columns:230px 1fr}
+.admin-side{
+  background:var(--ink-soft);min-height:100vh;padding:1.6rem;
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;
+}
+.admin-logo{
+  font-family:'Cormorant Garamond',serif;font-size:1.35rem;color:var(--parchment);
+  padding-bottom:1.4rem;margin-bottom:1.4rem;border-bottom:1px solid rgba(250,245,236,.09);
+  display:flex;align-items:center;gap:.6rem;
+}
+.admin-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--amber3);flex-shrink:0}
+.admin-nav-btn{
+  display:flex;align-items:center;gap:.7rem;padding:.72rem .95rem;border-radius:8px;
+  color:rgba(250,245,236,.55);background:none;border:none;font-size:.875rem;
+  font-weight:500;cursor:pointer;transition:all var(--trans);width:100%;text-align:left;
+  margin-bottom:.18rem;
+}
+.admin-nav-btn:hover,.admin-nav-btn.active{
+  background:rgba(184,115,26,.14);color:var(--parchment);
+}
+.admin-nav-btn.active{color:var(--amber3)}
+.admin-nav-icon{font-size:1.05rem;width:20px;text-align:center;flex-shrink:0}
+.admin-nav-spacer{flex:1}
+.admin-main{padding:2rem;overflow-y:auto}
+.admin-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;gap:1rem;flex-wrap:wrap}
+.admin-page-title{font-size:1.55rem;color:var(--ink)}
+.admin-stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-bottom:2rem}
+.admin-stat-card{
+  background:var(--white);border-radius:13px;padding:1.4rem 1.5rem;
+  box-shadow:var(--shadow1);border-left:4px solid var(--amber);
+}
+.admin-stat-card:nth-child(2){border-left-color:var(--teal)}
+.admin-stat-card:nth-child(3){border-left-color:var(--slate)}
+.admin-stat-card:nth-child(4){border-left-color:var(--rust)}
+.admin-stat-n{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--ink);line-height:1}
+.admin-stat-l{font-size:.78rem;color:var(--slate2);text-transform:uppercase;letter-spacing:.05em;margin-top:.3rem}
+.admin-stat-t{font-size:.78rem;color:var(--teal);margin-top:.38rem}
+.admin-card{background:var(--white);border-radius:13px;padding:1.6rem;box-shadow:var(--shadow1);margin-bottom:1.5rem}
+.admin-card-title{font-size:1rem;margin-bottom:1.3rem;display:flex;align-items:center;justify-content:space-between}
+
+/* Admin Table */
+.admin-table{width:100%;border-collapse:collapse}
+.admin-table th{
+  padding:.7rem 1rem;background:#f5ede0;font-size:.75rem;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--slate2);
+  font-weight:700;text-align:left;border-bottom:2px solid var(--cream2);
+  font-family:'Jost',sans-serif;
+}
+.admin-table td{
+  padding:.88rem 1rem;border-bottom:1px solid var(--cream);
+  font-size:.87rem;color:var(--slate);vertical-align:middle;
+}
+.admin-table tr:hover td{background:#fdf8f0}
+.tbl-title{font-weight:600;color:var(--ink)}
+.tbl-author{font-size:.78rem;color:var(--slate2);font-weight:400;margin-top:.15rem}
+.status-pill{padding:.22rem .68rem;border-radius:100px;font-size:.71rem;font-weight:700}
+.s-pub{background:#e8f5e8;color:#2e7d32}
+.s-unpub{background:#fff3e0;color:#e65100}
+.tbl-actions{display:flex;gap:.4rem}
+.act-btn{padding:.33rem .72rem;border-radius:6px;font-size:.77rem;font-weight:600;border:none;cursor:pointer;font-family:'Jost',sans-serif;transition:all .18s}
+.act-edit{background:rgba(42,61,74,.1);color:var(--slate)}
+.act-edit:hover{background:var(--slate);color:var(--white)}
+.act-del{background:rgba(184,58,26,.1);color:var(--rust)}
+.act-del:hover{background:var(--rust);color:var(--white)}
+.act-tog{background:rgba(26,92,90,.1);color:var(--teal)}
+.act-tog:hover{background:var(--teal);color:var(--white)}
+.act-feat{background:rgba(201,162,39,.1);color:var(--gold)}
+.act-feat:hover{background:var(--gold);color:var(--white)}
+
+/* Admin Form */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.15rem}
+.form-group{display:flex;flex-direction:column}
+.form-group.full{grid-column:span 2}
+.form-select{
+  padding:.75rem 1rem;border:1.5px solid var(--cream2);border-radius:8px;
+  outline:none;font-size:.93rem;color:var(--ink);background:var(--white);
+  cursor:pointer;transition:border-color var(--trans);
+}
+.form-select:focus{border-color:var(--amber)}
+.form-textarea{resize:vertical;min-height:95px}
+.upload-zone{
+  border:2px dashed var(--cream2);border-radius:10px;
+  padding:1.8rem 1rem;text-align:center;cursor:pointer;
+  transition:all var(--trans);background:var(--cream);
+}
+.upload-zone:hover{border-color:var(--amber);background:var(--amber-pale)}
+.upload-zone-icon{font-size:2rem;margin-bottom:.6rem}
+.upload-zone-txt{font-size:.85rem;color:var(--slate2)}
+.form-actions-row{display:flex;gap:.9rem;justify-content:flex-end;padding-top:1rem;border-top:1px solid var(--cream);margin-top:.5rem}
+.btn-cancel-form{padding:.72rem 1.5rem;background:var(--cream);color:var(--slate);border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:.9rem}
+.btn-cancel-form:hover{background:var(--cream2)}
+
+/* ═══════════════════════════════════════════
+   USER DASHBOARD
+═══════════════════════════════════════════ */
+#page-udash{background:var(--cream);min-height:100vh}
+.udash-header{background:var(--ink-soft);padding:1.4rem 2rem;display:flex;align-items:center;gap:1rem}
+.udash-header h2{font-family:'Cormorant Garamond',serif;color:var(--parchment);flex:1;font-size:1.5rem}
+.udash-inner{max-width:1100px;margin:0 auto;padding:2.2rem 2rem}
+.dash-tabs-row{display:flex;gap:.4rem;background:var(--white);padding:.38rem;border-radius:10px;width:fit-content;margin-bottom:2rem}
+.dash-tab-btn{padding:.52rem 1.3rem;border-radius:8px;font-size:.87rem;font-weight:600;cursor:pointer;border:none;background:none;color:var(--slate2);transition:all var(--trans)}
+.dash-tab-btn.active{background:var(--amber);color:var(--white)}
+.fav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:1.2rem}
+.fav-card{background:var(--white);border-radius:10px;overflow:hidden;box-shadow:var(--shadow1);cursor:pointer;transition:transform var(--trans)}
+.fav-card:hover{transform:translateY(-3px);box-shadow:var(--shadow2)}
+.fav-cover{height:195px;overflow:hidden}
+.fav-info{padding:.7rem .9rem}
+.fav-title{font-family:'Cormorant Garamond',serif;font-size:.93rem;color:var(--ink);line-height:1.3}
+.fav-author{font-size:.77rem;color:var(--slate2);margin-top:.22rem}
+.dl-list{display:flex;flex-direction:column;gap:.7rem}
+.dl-item{background:var(--white);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:1rem;box-shadow:var(--shadow1)}
+.dl-thumb{width:44px;height:60px;border-radius:5px;overflow:hidden;flex-shrink:0}
+.dl-title{font-weight:600;font-size:.9rem;color:var(--ink)}
+.dl-date{font-size:.77rem;color:var(--slate2);margin-top:.18rem}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+#footer{background:var(--ink);color:rgba(250,245,236,.55);padding:4.5rem 0 2rem}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-brand-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--parchment);margin-bottom:.9rem}
+.footer-brand-logo span{color:var(--amber3)}
+.footer-brand-desc{font-size:.87rem;line-height:1.75;max-width:280px;font-weight:300}
+.footer-col-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--parchment);margin-bottom:1rem;font-family:'Jost',sans-serif}
+.footer-link{display:block;font-size:.86rem;color:rgba(250,245,236,.45);cursor:pointer;margin-bottom:.55rem;transition:color var(--trans);background:none;border:none;text-align:left;font-family:'Jost',sans-serif}
+.footer-link:hover{color:var(--amber3)}
+.footer-bottom{border-top:1px solid rgba(250,245,236,.07);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;font-size:.82rem;flex-wrap:wrap;gap:.8rem}
+.footer-socials{display:flex;gap:.65rem}
+.soc-btn{width:36px;height:36px;border-radius:8px;background:rgba(250,245,236,.06);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem;transition:all var(--trans);color:rgba(250,245,236,.5)}
+.soc-btn:hover{background:var(--amber);color:var(--white)}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+#toast{
+  position:fixed;bottom:2rem;right:2rem;z-index:9999;
+  padding:1rem 1.5rem;background:var(--ink);color:var(--parchment);
+  border-radius:11px;font-size:.9rem;box-shadow:var(--shadow3);
+  border-left:4px solid var(--amber);display:none;align-items:center;gap:.7rem;
+  animation:fadeUp .3s ease;max-width:340px;
+}
+#toast.show{display:flex}
+
+/* ═══════════════════════════════════════════
+   BOOK COVER GENERATOR
+═══════════════════════════════════════════ */
+.gen-cover{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;padding:1rem;position:relative;
+}
+.gen-cover-spine{position:absolute;left:0;top:0;width:13px;height:100%;background:rgba(0,0,0,.28);border-radius:3px 0 0 3px}
+.gen-cover-content{text-align:center;z-index:1}
+.gen-cover-cat{font-size:.62rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.5rem}
+.gen-cover-title{font-family:'Cormorant Garamond',serif;color:rgba(255,255,255,.95);font-size:.88rem;font-style:italic;line-height:1.35;margin-bottom:.45rem}
+.gen-cover-author{font-size:.65rem;color:rgba(255,255,255,.6)}
+.gen-cover-deco{width:30px;height:1px;background:rgba(255,255,255,.3);margin:.5rem auto}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;gap:3rem}
+  .hero-visual{height:320px}
+  .featured-book{grid-template-columns:1fr}
+  .featured-cover{height:260px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  #page-admin.active{grid-template-columns:1fr}
+  .admin-side{display:none}
+  .admin-stat-row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-menu-toggle{display:block}
+  .books-grid{grid-template-columns:repeat(2,1fr);gap:1rem}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .search-wrap{flex-wrap:wrap}
+  .search-btn{width:100%;justify-content:center;padding:1rem}
+  .modal-body{grid-template-columns:1fr}
+  .modal-cover-wrap{height:210px}
+  .featured-book{gap:1.5rem}
+  .hero-stats{gap:1.5rem}
+  .hero-stat-num{font-size:1.7rem}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .form-grid{grid-template-columns:1fr}
+  .form-group.full{grid-column:span 1}
+  .admin-stat-row{grid-template-columns:1fr}
+  .viewer-page{padding:2rem 1.5rem}
+}
+@media(max-width:480px){
+  .books-grid{grid-template-columns:repeat(2,1fr)}
+  .hero-cta{flex-direction:column}
+  .btn-hero-primary,.btn-hero-ghost{width:100%;justify-content:center}
+  .container{padding:0 1.2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" onclick="goPage('home')">
+      <div class="nav-brand-icon">📚</div>
+      <span class="nav-brand-name">My<span>Book</span>Hub</span>
+    </a>
+    <div class="nav-links" id="nav-links">
+      <button class="nav-link active" onclick="goPage('home')">Home</button>
+      <button class="nav-link" onclick="filterCat('Fiction');goPage('home')">Fiction</button>
+      <button class="nav-link" onclick="filterCat('Technology');goPage('home')">Technology</button>
+      <button class="nav-link" onclick="filterCat('Self-Help');goPage('home')">Self‑Help</button>
+      <button class="nav-link" onclick="filterCat('Science');goPage('home')">Science</button>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn nav-btn-ghost" id="nav-user-btn" onclick="navUserAction()">Sign In</button>
+      <button class="nav-btn nav-btn-solid" onclick="goAdmin()">Admin ↗</button>
+      <button class="nav-menu-toggle" onclick="toggleMobileNav()">☰</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     HOME PAGE
+══════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg-mesh"></div>
+    <div class="hero-grid-lines"></div>
+    <div class="container">
+      <div class="hero-inner">
+        <div>
+          <div class="hero-eyebrow anim-fadeup">Your Digital Library</div>
+          <h1 class="hero-h1 anim-fadeup d1">Discover Your Next<br/><em>Great Read</em></h1>
+          <p class="hero-p anim-fadeup d2">Thousands of books across every genre. Read online, download freely. New titles published every day by authors worldwide.</p>
+          <div class="hero-cta anim-fadeup d3">
+            <button class="btn-hero-primary" onclick="document.getElementById('main-books').scrollIntoView({behavior:'smooth'})">
+              📚 Explore Books
+            </button>
+            <button class="btn-hero-ghost" onclick="filterCat('All');document.getElementById('main-books').scrollIntoView({behavior:'smooth'})">
+              🆓 Browse Free
+            </button>
+          </div>
+          <div class="hero-stats anim-fadeup d4">
+            <div><div class="hero-stat-num">2,400+</div><div class="hero-stat-lbl">Books</div></div>
+            <div><div class="hero-stat-num">180+</div><div class="hero-stat-lbl">Authors</div></div>
+            <div><div class="hero-stat-num">50K+</div><div class="hero-stat-lbl">Readers</div></div>
+            <div><div class="hero-stat-num">14</div><div class="hero-stat-lbl">Genres</div></div>
+          </div>
+        </div>
+        <div class="hero-visual anim-fadein d2">
+          <div class="hero-glow"></div>
+          <div class="book-tower">
+            <div class="book3d"><div class="book3d-spine"></div></div>
+            <div class="book3d"><div class="book3d-spine"></div></div>
+            <div class="book3d">
+              <div class="book3d-spine"></div>
+              <div class="book3d-title" id="hero-book-title">The Midnight Library</div>
+            </div>
+          </div>
+          <div class="hero-badge">
+            <div class="hero-badge-num">⭐</div>
+            <div class="hero-badge-lbl">Top Pick</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div id="stats-strip">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-cell"><div class="stat-num">2,400+</div><div class="stat-lbl">Total Books</div></div>
+        <div class="stat-cell"><div class="stat-num">50,000+</div><div class="stat-lbl">Active Readers</div></div>
+        <div class="stat-cell"><div class="stat-num">180+</div><div class="stat-lbl">Authors</div></div>
+        <div class="stat-cell"><div class="stat-num">98%</div><div class="stat-lbl">Satisfaction</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <section id="search-section">
+    <div class="container">
+      <div class="search-wrap">
+        <div class="search-icon">🔍</div>
+        <input class="search-input" id="search-input" placeholder="Search by title, author, or keyword..." oninput="renderBooks()"/>
+        <div class="search-divider"></div>
+        <select class="search-select" id="search-cat" onchange="renderBooks()">
+          <option value="">All Categories</option>
+          <option>Fiction</option><option>Non-Fiction</option><option>Science</option>
+          <option>History</option><option>Technology</option><option>Business</option>
+          <option>Philosophy</option><option>Poetry</option><option>Children</option>
+          <option>Self-Help</option><option>Biography</option><option>Mystery</option>
+          <option>Romance</option><option>Fantasy</option><option>Science Fiction</option>
+        </select>
+        <button class="search-btn" onclick="renderBooks()">Search</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED -->
+  <section id="featured-strip">
+    <div class="container">
+      <div class="featured-book" id="featured-book">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKS SECTION -->
+  <section class="section" id="main-books">
+    <div class="container">
+      <div class="section-top">
+        <div>
+          <div class="section-label">Browse Collection</div>
+          <h2 class="section-h2">Latest <span>Books</span></h2>
+          <div class="section-sub" id="books-count-label">Loading…</div>
+        </div>
+        <button class="see-all" onclick="filterCat('All')">View All →</button>
+      </div>
+
+      <!-- Category Pills -->
+      <div class="cat-pills" id="cat-pills"></div>
+
+      <!-- Grid -->
+      <div class="books-grid" id="books-grid"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand-logo">My<span>Book</span>Hub</div>
+          <p class="footer-brand-desc">Your premier destination for digital books. Discover, read, and share knowledge from around the world.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Explore</div>
+          <button class="footer-link" onclick="filterCat('Fiction')">Fiction</button>
+          <button class="footer-link" onclick="filterCat('Technology')">Technology</button>
+          <button class="footer-link" onclick="filterCat('Self-Help')">Self‑Help</button>
+          <button class="footer-link">Free Books</button>
+          <button class="footer-link">New Arrivals</button>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <button class="footer-link">About Us</button>
+          <button class="footer-link">Blog</button>
+          <button class="footer-link">Careers</button>
+          <button class="footer-link">Press</button>
+        </div>
+        <div>
+          <div class="footer-col-title">Support</div>
+          <button class="footer-link">Help Center</button>
+          <button class="footer-link">Privacy Policy</button>
+          <button class="footer-link">Terms of Service</button>
+          <button class="footer-link">Contact Us</button>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 MyBookHub. All rights reserved.</span>
+        <div class="footer-socials">
+          <button class="soc-btn">𝕏</button>
+          <button class="soc-btn">in</button>
+          <button class="soc-btn">f</button>
+          <button class="soc-btn">▶</button>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div><!-- /page-home -->
+
+<!-- ══════════════════════════════════════════
+     AUTH PAGE
+══════════════════════════════════════════ -->
+<div id="page-auth" class="page" style="display:none">
+  <div style="min-height:100vh;background:linear-gradient(150deg,#0e0904,#1c1208,#0e1a0e);display:flex;align-items:center;justify-content:center;padding:2rem">
+    <div class="auth-card">
+      <div class="auth-logo-wrap">
+        <div class="auth-logo-icon">📚</div>
+        <h2 class="auth-title" id="auth-title">Welcome Back</h2>
+        <p class="auth-sub" id="auth-sub">Sign in to your reader account</p>
+      </div>
+      <div class="auth-form">
+        <div id="auth-name-group" class="hidden">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" id="auth-name" placeholder="Your name"/>
+        </div>
+        <div>
+          <label class="form-label">Email Address</label>
+          <input class="form-input" id="auth-email" type="email" placeholder="you@example.com"/>
+        </div>
+        <div>
+          <label class="form-label">Password</label>
+          <input class="form-input" id="auth-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')authSubmit()"/>
+        </div>
+        <div id="auth-err" class="auth-err hidden"></div>
+        <button class="auth-submit" onclick="authSubmit()" id="auth-submit-btn">Sign In</button>
+      </div>
+      <div class="auth-switch" id="auth-switch">
+        Don't have an account? <span onclick="toggleAuthMode()">Sign up</span>
+      </div>
+      <div class="auth-demo">Demo: any email + any password to sign in</div>
+      <div style="text-align:center;margin-top:1rem">
+        <button style="background:none;border:none;color:var(--slate2);font-size:.85rem;cursor:pointer;font-family:'Jost',sans-serif" onclick="goPage('home')">← Back to Library</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     USER DASHBOARD
+══════════════════════════════════════════ -->
+<div id="page-udash" class="page" style="display:none">
+  <div class="udash-header">
+    <button onclick="goPage('home')" style="background:none;border:none;color:rgba(250,245,236,.6);cursor:pointer;font-size:.9rem;font-family:'Jost',sans-serif">← Library</button>
+    <h2>My Library</h2>
+    <button onclick="logoutUser()" style="background:rgba(184,115,26,.15);border:1px solid rgba(184,115,26,.25);color:var(--amber3);padding:.4rem .9rem;border-radius:7px;font-size:.83rem;cursor:pointer;font-family:'Jost',sans-serif">Sign Out</button>
+  </div>
+  <div class="udash-inner">
+    <div class="dash-tabs-row">
+      <button class="dash-tab-btn active" onclick="switchDashTab('favs',this)">♥ Saved Books</button>
+      <button class="dash-tab-btn" onclick="switchDashTab('history',this)">📥 Downloads</button>
+    </div>
+    <div id="dash-favs"></div>
+    <div id="dash-history" class="hidden"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ADMIN PAGE
+══════════════════════════════════════════ -->
+<div id="page-admin">
+  <!-- Sidebar -->
+  <div class="admin-side">
+    <div class="admin-logo"><div class="admin-logo-dot"></div>MyBookHub Admin</div>
+    <button class="admin-nav-btn active" onclick="adminTab('overview',this)"><span class="admin-nav-icon">📊</span> Overview</button>
+    <button class="admin-nav-btn" onclick="adminTab('books',this)"><span class="admin-nav-icon">📚</span> Books</button>
+    <button class="admin-nav-btn" onclick="adminTab('add',this)"><span class="admin-nav-icon">➕</span> Add Book</button>
+    <button class="admin-nav-btn" onclick="adminTab('analytics',this)"><span class="admin-nav-icon">📈</span> Analytics</button>
+    <button class="admin-nav-btn" onclick="adminTab('settings',this)"><span class="admin-nav-icon">⚙️</span> Settings</button>
+    <div class="admin-nav-spacer"></div>
+    <button class="admin-nav-btn" onclick="goPage('home')"><span class="admin-nav-icon">🌐</span> View Site</button>
+    <button class="admin-nav-btn" onclick="adminLogout()"><span class="admin-nav-icon">🚪</span> Sign Out</button>
+  </div>
+  <!-- Main -->
+  <div class="admin-main" id="admin-main"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     BOOK DETAIL MODAL
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="book-modal" onclick="if(event.target===this)closeModal('book-modal')">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Book Details</h3>
+      <button class="modal-close" onclick="closeModal('book-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="reviews-wrap" id="modal-reviews"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ADMIN BOOK FORM MODAL
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="form-modal" onclick="if(event.target===this)closeModal('form-modal')">
+  <div class="modal" style="max-width:720px">
+    <div class="modal-head">
+      <h3 id="form-modal-title">Add New Book</h3>
+      <button class="modal-close" onclick="closeModal('form-modal')">✕</button>
+    </div>
+    <div style="padding:2rem" id="form-modal-body"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PDF VIEWER
+══════════════════════════════════════════ -->
+<div id="pdf-viewer">
+  <div class="viewer-bar">
+    <div class="viewer-title-txt" id="viewer-title">Book Title</div>
+    <button class="viewer-ctrl-btn" id="viewer-prev" onclick="viewerPage(-1)">← Prev</button>
+    <span class="viewer-page-info" id="viewer-page-info">1 / 3</span>
+    <button class="viewer-ctrl-btn" id="viewer-next" onclick="viewerPage(1)">Next →</button>
+    <button class="viewer-close-btn" onclick="closeViewer()">✕ Close</button>
+  </div>
+  <div class="viewer-content" id="viewer-content"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TOAST
+══════════════════════════════════════════ -->
+<div id="toast">
+  <span id="toast-icon">📚</span>
+  <span id="toast-msg"></span>
+</div>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+<script>
+// ═══════════════════════════════════
+// DATA
+// ═══════════════════════════════════
+const COVER_COLORS = [
+  "linear-gradient(140deg,#6b2d0a,#c45a1a)",
+  "linear-gradient(140deg,#0a3d2d,#1a6a4a)",
+  "linear-gradient(140deg,#1a2d5a,#2a4a8a)",
+  "linear-gradient(140deg,#4a1a3a,#8a3a6a)",
+  "linear-gradient(140deg,#3a2a1a,#6a4a2a)",
+  "linear-gradient(140deg,#1a2a4a,#2a4a8a)",
+  "linear-gradient(140deg,#2a3a1a,#4a6a2a)",
+  "linear-gradient(140deg,#4a2a1a,#8a4a2a)",
+  "linear-gradient(140deg,#1a3a3a,#2a6a6a)",
+  "linear-gradient(140deg,#3a1a4a,#6a2a8a)",
+];
+
+let books = [
+  {id:1,title:"The Midnight Library",author:"Matt Haig",category:"Fiction",
+   description:"A dazzling novel about all the lives you could live — a exploration of regret, hope, and what makes life truly worth living. When Nora Seed finds herself in the Midnight Library, between life and death, she discovers a chance to undo her every regret.",
+   pages:304,published:"2020-08-13",downloads:8420,views:42100,rating:4.7,
+   isFeatured:true,isFree:true,price:0,status:"published",color:0,
+   reviews:[{u:"Sarah M.",r:5,t:"Absolutely loved this!",d:"Jan 12"},{u:"James T.",r:4,t:"Brilliant and moving.",d:"Feb 3"}]},
+  {id:2,title:"Atomic Habits",author:"James Clear",category:"Self-Help",
+   description:"No matter your goals, Atomic Habits offers a proven framework for improving—every day. The book draws on biology, psychology, and neuroscience to create an easy-to-understand guide for making good habits inevitable and bad habits impossible.",
+   pages:320,published:"2018-10-16",downloads:15230,views:78500,rating:4.9,
+   isFeatured:false,isFree:false,price:12.99,status:"published",color:1,reviews:[]},
+  {id:3,title:"Sapiens",author:"Yuval Noah Harari",category:"History",
+   description:"A brief history of humankind — from the Stone Age to the present. From a renowned historian comes a groundbreaking narrative of humanity's creation and evolution, exploring how the currents of history have shaped our societies.",
+   pages:443,published:"2011-01-01",downloads:22100,views:95000,rating:4.8,
+   isFeatured:false,isFree:false,price:14.99,status:"published",color:2,reviews:[]},
+  {id:4,title:"Dune",author:"Frank Herbert",category:"Science Fiction",
+   description:"Set on the desert planet Arrakis, Dune is the story of Paul Atreides, heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the spice melange — a commodity of unimaginable value.",
+   pages:896,published:"1965-08-01",downloads:18900,views:67400,rating:4.9,
+   isFeatured:true,isFree:false,price:11.99,status:"published",color:3,reviews:[]},
+  {id:5,title:"The Python Craftsman",author:"Zhang Lei",category:"Technology",
+   description:"A comprehensive guide to writing better Python code — covering best practices, design patterns, and the subtle art of crafting readable, maintainable software that your future self will thank you for.",
+   pages:512,published:"2022-03-15",downloads:6700,views:31200,rating:4.6,
+   isFeatured:false,isFree:true,price:0,status:"published",color:4,reviews:[]},
+  {id:6,title:"Meditations",author:"Marcus Aurelius",category:"Philosophy",
+   description:"A series of personal writings by the Roman Emperor Marcus Aurelius, recording his private notes and ideas on Stoic philosophy. A timeless guide to living a virtuous, purposeful life under any circumstances.",
+   pages:256,published:"180-01-01",downloads:9800,views:44300,rating:4.8,
+   isFeatured:false,isFree:true,price:0,status:"published",color:5,reviews:[]},
+  {id:7,title:"The Design of Everyday Things",author:"Don Norman",category:"Technology",
+   description:"Revised edition of the business classic. A compelling analysis of design that emphasizes communication between objects and users — why some designs succeed brilliantly and others fail utterly.",
+   pages:368,published:"2013-11-05",downloads:5400,views:25100,rating:4.5,
+   isFeatured:false,isFree:false,price:16.99,status:"published",color:6,reviews:[]},
+  {id:8,title:"Pride and Prejudice",author:"Jane Austen",category:"Fiction",
+   description:"The romantic clash between the opinionated Elizabeth Bennet and her proud beau Mr. Darcy. A timeless story of love, wit, and social conventions in 19th-century England.",
+   pages:432,published:"1813-01-28",downloads:24600,views:102000,rating:4.7,
+   isFeatured:false,isFree:true,price:0,status:"published",color:7,reviews:[]},
+  {id:9,title:"Thinking, Fast and Slow",author:"Daniel Kahneman",category:"Science",
+   description:"A Nobel laureate's exploration of the two systems that drive the way we think — fast, intuitive System 1, and slow, deliberate System 2 — and how they shape our judgments and decisions.",
+   pages:499,published:"2011-10-25",downloads:11400,views:53200,rating:4.7,
+   isFeatured:false,isFree:false,price:13.99,status:"published",color:8,reviews:[]},
+  {id:10,title:"Zero to One",author:"Peter Thiel",category:"Business",
+   description:"Notes on startups, or how to build the future. Peter Thiel argues that we live in a time of stagnation — and shows what it takes to build companies that create new things, moving from zero to one.",
+   pages:224,published:"2014-09-16",downloads:8900,views:41100,rating:4.5,
+   isFeatured:false,isFree:false,price:11.99,status:"published",color:9,reviews:[]},
+];
+
+let activeCategory = "All";
+let favorites = [1,4];
+let downloadHistory = [{id:1,date:"Feb 14, 2024"},{id:2,date:"Jan 20, 2024"}];
+let userLoggedIn = false;
+let userName = "";
+let adminLoggedIn = false;
+let editingBookId = null;
+let viewerPages = [];
+let viewerCurrentPage = 0;
+let selectedBookId = null;
+let reviewStarSelected = 5;
+
+const CATEGORIES = ["All","Fiction","Non-Fiction","Science","History","Technology","Business","Philosophy","Poetry","Children","Self-Help","Biography","Mystery","Romance","Fantasy","Science Fiction"];
+
+// ═══════════════════════════════════
+// COVER GENERATOR
+// ═══════════════════════════════════
+function genCover(book, h="100%"){
+  return `<div class="gen-cover" style="background:${COVER_COLORS[book.color||0]};height:${h}">
+    <div class="gen-cover-spine"></div>
+    <div class="gen-cover-content">
+      <div class="gen-cover-deco"></div>
+      <div class="gen-cover-cat">${book.category}</div>
+      <div class="gen-cover-title">${book.title}</div>
+      <div class="gen-cover-deco"></div>
+      <div class="gen-cover-author">${book.author}</div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════
+// PAGE ROUTING
+// ═══════════════════════════════════
+function goPage(page){
+  // hide all
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  document.getElementById('page-admin').style.display='none';
+  document.getElementById('page-admin').classList.remove('active');
+  document.getElementById('navbar').style.display='';
+
+  if(page==='home'){
+    document.getElementById('page-home').style.display='block';
+    renderFeatured();
+    renderBooks();
+  } else if(page==='auth'){
+    document.getElementById('page-auth').style.display='block';
+  } else if(page==='udash'){
+    document.getElementById('page-udash').style.display='block';
+    renderUserDash();
+  }
+}
+
+function goAdmin(){
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  document.getElementById('navbar').style.display='none';
+  document.getElementById('page-admin').style.display='grid';
+  document.getElementById('page-admin').classList.add('active');
+  if(!adminLoggedIn){
+    showAdminLogin();
+  } else {
+    adminTab('overview', document.querySelector('.admin-nav-btn.active'));
+  }
+}
+
+// ═══════════════════════════════════
+// TOAST
+// ═══════════════════════════════════
+let toastTimer;
+function toast(msg, icon="📚"){
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  document.getElementById('toast-icon').textContent = icon;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+// ═══════════════════════════════════
+// MODAL
+// ═══════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ═══════════════════════════════════
+// FEATURED BOOK
+// ═══════════════════════════════════
+function renderFeatured(){
+  const book = books.find(b=>b.isFeatured && b.status==="published");
+  if(!book){ document.getElementById('featured-strip').style.display='none'; return; }
+  document.getElementById('featured-strip').style.display='';
+  const stars = "★".repeat(Math.floor(book.rating))+"☆".repeat(5-Math.floor(book.rating));
+  document.getElementById('featured-book').innerHTML = `
+    <div class="featured-cover anim-fadeup">${genCover(book,"100%")}</div>
+    <div class="anim-fadeup d2">
+      <div class="featured-tag">⭐ Featured Book</div>
+      <h2 class="featured-title">${book.title}</h2>
+      <p class="featured-author">by ${book.author} &nbsp;·&nbsp; ${book.category}</p>
+      <p class="featured-desc">${book.description}</p>
+      <div class="featured-actions">
+        <button class="btn btn-primary" onclick="openBookModal(${book.id})">Read Preview →</button>
+        <button class="btn btn-outline" onclick="dlBook(${book.id})">${book.isFree?'📥 Download Free':'Buy $'+book.price}</button>
+        <div class="featured-rating">
+          <span class="stars">${stars}</span>
+          <span>${book.rating} · ${(book.downloads/1000).toFixed(1)}k downloads</span>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('hero-book-title').textContent = book.title;
+}
+
+// ═══════════════════════════════════
+// CATEGORY PILLS
+// ═══════════════════════════════════
+function renderCatPills(){
+  const wrap = document.getElementById('cat-pills');
+  wrap.innerHTML = CATEGORIES.map(c=>`
+    <button class="cat-pill ${activeCategory===c?'active':''}" onclick="filterCat('${c}')">${c}</button>
+  `).join('');
+}
+
+function filterCat(cat){
+  activeCategory = cat;
+  document.getElementById('search-cat').value = cat==="All"?"":cat;
+  renderCatPills();
+  renderBooks();
+}
+
+// ═══════════════════════════════════
+// BOOKS GRID
+// ═══════════════════════════════════
+function renderBooks(){
+  renderCatPills();
+  const q = (document.getElementById('search-input')?.value||"").toLowerCase();
+  const selCat = document.getElementById('search-cat')?.value||"";
+  const cat = selCat || (activeCategory==="All"?"":activeCategory);
+
+  const filtered = books.filter(b=>{
+    if(b.status!=="published") return false;
+    if(cat && b.category!==cat) return false;
+    if(q && !b.title.toLowerCase().includes(q) && !b.author.toLowerCase().includes(q) && !b.category.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  const lbl = document.getElementById('books-count-label');
+  if(lbl) lbl.textContent = `${filtered.length} book${filtered.length!==1?'s':''} found`;
+
+  const grid = document.getElementById('books-grid');
+  if(!grid) return;
+
+  if(filtered.length===0){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-state-icon">📭</div>
+      <h3>No books found</h3>
+      <p>Try adjusting your search or category.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((b,i)=>{
+    const isFav = favorites.includes(b.id);
+    const badge = b.isFeatured?'<span class="bc-badge badge-feat">⭐ Featured</span>':
+                  b.downloads>15000?'<span class="bc-badge badge-hot">🔥 Hot</span>':
+                  b.isFree?'<span class="bc-badge badge-free">Free</span>':'';
+    const ratingStars = "★".repeat(Math.floor(b.rating));
+    return `<div class="book-card anim-fadeup" style="animation-delay:${i*0.045}s" onclick="openBookModal(${b.id})">
+      <div class="bc-cover">
+        ${genCover(b,"100%")}
+        ${badge}
+        <div class="bc-overlay">
+          <button class="bc-overlay-btn bc-btn-read" onclick="event.stopPropagation();openBookModal(${b.id})">Read</button>
+          <button class="bc-overlay-btn bc-btn-save" onclick="event.stopPropagation();toggleFav(${b.id})">${isFav?'♥':'♡'} Save</button>
+        </div>
+      </div>
+      <div class="bc-info">
+        <div class="bc-cat">${b.category}</div>
+        <div class="bc-title">${b.title}</div>
+        <div class="bc-author">by ${b.author}</div>
+        <div class="bc-meta">
+          <div class="bc-rating"><span class="bc-stars">${ratingStars}</span> ${b.rating}</div>
+          <div class="bc-dl">${(b.downloads/1000).toFixed(1)}k ↓</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════
+// BOOK MODAL
+// ═══════════════════════════════════
+function openBookModal(id){
+  const b = books.find(x=>x.id===id);
+  if(!b) return;
+  selectedBookId = id;
+  b.views++;
+
+  const isFav = favorites.includes(id);
+  const stars = "★".repeat(Math.floor(b.rating))+"☆".repeat(5-Math.floor(b.rating));
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-cover-wrap">${genCover(b,"100%")}</div>
+    <div class="modal-info">
+      <div class="modal-cat">${b.category}</div>
+      <h2 class="modal-title">${b.title}</h2>
+      <p class="modal-author">by ${b.author}</p>
+      <div class="modal-rating-row">
+        <span style="color:var(--gold);font-size:.95rem">${stars}</span>
+        <b>${b.rating}</b>
+        <span style="color:var(--slate2);font-size:.83rem">(${b.reviews.length} reviews)</span>
+        <span style="color:var(--slate2);font-size:.82rem;margin-left:auto">${(b.views/1000).toFixed(1)}k views</span>
+      </div>
+      <p class="modal-desc">${b.description}</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="openViewer(${id})">📖 Read Online</button>
+        <button class="btn btn-secondary" onclick="dlBook(${id})">${b.isFree?'📥 Download Free':'💳 Buy $'+b.price}</button>
+        <button class="btn btn-sm btn-icon" id="fav-btn-${id}" onclick="toggleFav(${id})" title="Save">${isFav?'♥':'♡'}</button>
+      </div>
+      <div class="modal-details-grid">
+        ${[["Pages",b.pages],["Published",b.published?.split('-')[0]||'N/A'],["Category",b.category],["Price",b.isFree?"Free":"$"+b.price]].map(([l,v])=>`
+          <div class="detail-item"><div class="lbl">${l}</div><div class="val">${v}</div></div>`).join('')}
+      </div>
+    </div>`;
+
+  renderModalReviews(id);
+  openModal('book-modal');
+}
+
+function renderModalReviews(id){
+  const b = books.find(x=>x.id===id);
+  if(!b) return;
+  reviewStarSelected = 5;
+  document.getElementById('modal-reviews').innerHTML = `
+    <h4>Reviews & Ratings</h4>
+    <div class="review-input-row">
+      <div class="star-pick" id="star-pick">
+        ${[1,2,3,4,5].map(s=>`<button class="star-pick-btn ${s<=reviewStarSelected?'on':''}" onclick="setReviewStar(${s},${id})" data-s="${s}">★</button>`).join('')}
+      </div>
+      <input class="review-txt-input" id="review-input" placeholder="Share your thoughts…" onkeydown="if(event.key==='Enter')postReview(${id})"/>
+      <button class="review-post-btn" onclick="postReview(${id})">Post</button>
+    </div>
+    ${b.reviews.map(r=>`
+      <div class="review-card">
+        <div class="review-card-top">
+          <div class="rv-avatar">${r.u[0]}</div>
+          <div><div class="rv-name">${r.u}</div><div class="rv-stars">${"★".repeat(r.r)}</div></div>
+          <div class="rv-date">${r.d}</div>
+        </div>
+        <div class="rv-text">${r.t}</div>
+      </div>`).join('')}
+  `;
+}
+
+function setReviewStar(s, bookId){
+  reviewStarSelected = s;
+  document.querySelectorAll('#star-pick .star-pick-btn').forEach((btn,i)=>{
+    btn.classList.toggle('on', i<s);
+  });
+}
+
+function postReview(id){
+  const inp = document.getElementById('review-input');
+  const txt = inp.value.trim();
+  if(!txt) return;
+  const b = books.find(x=>x.id===id);
+  const user = userLoggedIn ? userName : "Guest";
+  b.reviews.unshift({u:user, r:reviewStarSelected, t:txt, d:"Today"});
+  // recalc rating
+  b.rating = parseFloat(((b.reviews.reduce((s,r)=>s+r.r,0)/b.reviews.length)||b.rating).toFixed(1));
+  inp.value="";
+  renderModalReviews(id);
+  toast("Review posted! ⭐");
+}
+
+// ═══════════════════════════════════
+// TOGGLE FAV / DOWNLOAD
+// ═══════════════════════════════════
+function toggleFav(id){
+  if(favorites.includes(id)){
+    favorites = favorites.filter(f=>f!==id);
+    toast("Removed from saved books");
+  } else {
+    favorites.push(id);
+    toast("Saved to your library ♥", "♥");
+  }
+  // update button in modal if open
+  const btn = document.getElementById('fav-btn-'+id);
+  if(btn) btn.textContent = favorites.includes(id)?'♥':'♡';
+  renderBooks();
+}
+
+function dlBook(id){
+  const b = books.find(x=>x.id===id);
+  if(!b) return;
+  b.downloads++;
+  downloadHistory.unshift({id, date:"Today"});
+  toast(`Downloading "${b.title}"… 📥`, "📥");
+  if(selectedBookId===id) renderBooks();
+}
+
+// ═══════════════════════════════════
+// PDF VIEWER
+// ═══════════════════════════════════
+function openViewer(id){
+  const b = books.find(x=>x.id===id);
+  if(!b) return;
+  closeModal('book-modal');
+
+  viewerPages = [
+    {title:"Chapter One: The Beginning",
+     html:`<h2>Chapter One: The Beginning</h2>
+     <p class="drop-cap">Welcome to <strong>${b.title}</strong> by <em>${b.author}</em>. This is a preview of the full edition available on MyBookHub.</p>
+     <p>The story opens on a crisp autumn morning — the kind that makes you feel anything is possible. The protagonist stands at the edge of a decision that will change everything, a fork in the road that countless others had faced before, yet none had felt quite so personal as this moment right now.</p>
+     <p>It had been three years since the last time anything truly remarkable happened. Three years of ordinary days stacked one upon another like pages in a book no one particularly wanted to read. But today was different. Today, the world seemed to hold its breath in anticipation.</p>
+     <p>She walked across the cobblestones slowly, deliberately, letting each step be its own small act of intention. The city was waking around her — the smell of fresh bread, the distant rumble of trams, a child's laughter somewhere above.</p>`},
+    {title:"Chapter Two: The Discovery",
+     html:`<h2>Chapter Two: The Discovery</h2>
+     <p class="drop-cap">As the morning unfolded, a discovery emerged that would set the entire course of the narrative. Details came slowly, like a photograph developing in a darkroom, each new piece altering the picture that had seemed so clear just moments before.</p>
+     <p>"What we know," said the wise old scholar, adjusting his spectacles, "is merely the surface of what is true. The depths remain hidden until we are ready to receive them."</p>
+     <p>And so the journey truly began — not with a dramatic leap, but with a single careful step forward into the unknown territory of possibility.</p>
+     <p>The letter was sealed with red wax. On it, an insignia she'd seen once before, in her grandmother's old photographs, in a box she'd been told never to open. She opened it now.</p>`},
+    {title:"Chapter Three: The Journey",
+     html:`<h2>Chapter Three: The Journey</h2>
+     <p class="drop-cap">The road ahead was uncertain, as all truly worthwhile roads must be. She carried with her only the essentials — a journal, a compass that pointed not north but toward something more mysterious, and the letter.</p>
+     <p>At each crossroads she paused, not from indecision but from respect for the weight of the moment. Every choice shapes the person we become. Every path not taken whispers quietly in our dreams.</p>
+     <p>By nightfall she had reached the edge of the forest. The trees stood tall and ancient, their canopy filtering starlight into silver threads. Somewhere deep within, a light flickered.</p>
+     <p><em>Continue reading in the full edition — available for download above.</em></p>`}
+  ];
+
+  viewerCurrentPage = 0;
+  document.getElementById('viewer-title').textContent = b.title;
+  renderViewerPage();
+  document.getElementById('pdf-viewer').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function renderViewerPage(){
+  const p = viewerPages[viewerCurrentPage];
+  document.getElementById('viewer-content').innerHTML = `<div class="viewer-page">${p.html}</div>
+    <div style="display:flex;gap:.75rem;padding:.5rem 0">
+      ${viewerPages.map((_,i)=>`<button class="viewer-ctrl-btn" onclick="viewerGoPage(${i})" style="${i===viewerCurrentPage?'background:var(--amber);color:var(--white);border-color:var(--amber)':''}">Chapter ${i+1}</button>`).join('')}
+    </div>`;
+  document.getElementById('viewer-page-info').textContent = `${viewerCurrentPage+1} / ${viewerPages.length}`;
+  document.getElementById('viewer-prev').disabled = viewerCurrentPage===0;
+  document.getElementById('viewer-next').disabled = viewerCurrentPage===viewerPages.length-1;
+}
+
+function viewerPage(d){ viewerGoPage(viewerCurrentPage+d); }
+function viewerGoPage(i){
+  viewerCurrentPage = Math.max(0,Math.min(viewerPages.length-1,i));
+  renderViewerPage();
+  document.getElementById('viewer-content').scrollTop=0;
+}
+function closeViewer(){
+  document.getElementById('pdf-viewer').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+// ═══════════════════════════════════
+// AUTH
+// ═══════════════════════════════════
+let authMode = "login";
+function navUserAction(){
+  if(userLoggedIn){ goPage('udash'); }
+  else { authMode="login"; goPage('auth'); updateAuthUI(); }
+}
+function toggleAuthMode(){
+  authMode = authMode==="login"?"signup":"login";
+  updateAuthUI();
+}
+function updateAuthUI(){
+  const isLogin = authMode==="login";
+  document.getElementById('auth-title').textContent = isLogin?"Welcome Back":"Create Account";
+  document.getElementById('auth-sub').textContent = isLogin?"Sign in to your reader account":"Join thousands of readers";
+  document.getElementById('auth-submit-btn').textContent = isLogin?"Sign In →":"Create Account →";
+  document.getElementById('auth-switch').innerHTML = isLogin?
+    `Don't have an account? <span onclick="toggleAuthMode()">Sign up</span>`:
+    `Already have an account? <span onclick="toggleAuthMode()">Sign in</span>`;
+  document.getElementById('auth-name-group').classList.toggle('hidden', isLogin);
+  document.getElementById('auth-err').classList.add('hidden');
+}
+function authSubmit(){
+  const email = document.getElementById('auth-email').value.trim();
+  const pass = document.getElementById('auth-pass').value;
+  if(!email||!pass){
+    document.getElementById('auth-err').textContent="Please fill in all fields.";
+    document.getElementById('auth-err').classList.remove('hidden');
+    return;
+  }
+  userName = authMode==="signup"?(document.getElementById('auth-name').value||email.split('@')[0]):email.split('@')[0];
+  userLoggedIn=true;
+  document.getElementById('nav-user-btn').textContent = "My Library";
+  toast(authMode==="login"?"Welcome back! 👋":"Account created! Welcome 🎉","👋");
+  goPage('home');
+}
+function logoutUser(){
+  userLoggedIn=false; userName="";
+  document.getElementById('nav-user-btn').textContent="Sign In";
+  goPage('home'); toast("Signed out successfully");
+}
+
+// ═══════════════════════════════════
+// USER DASHBOARD
+// ═══════════════════════════════════
+function renderUserDash(){
+  renderFavs(); renderDlHistory();
+}
+function switchDashTab(tab, btn){
+  document.querySelectorAll('.dash-tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('dash-favs').classList.toggle('hidden', tab!=='favs');
+  document.getElementById('dash-history').classList.toggle('hidden', tab!=='history');
+}
+function renderFavs(){
+  const favBooks = books.filter(b=>favorites.includes(b.id));
+  document.getElementById('dash-favs').innerHTML = favBooks.length===0?
+    `<div class="empty-state"><div class="empty-state-icon">🔖</div><h3>No saved books yet</h3><p>Tap the heart icon on any book to save it here.</p></div>`:
+    `<div class="fav-grid">${favBooks.map(b=>`
+      <div class="fav-card" onclick="openBookModal(${b.id})">
+        <div class="fav-cover">${genCover(b,"100%")}</div>
+        <div class="fav-info"><div class="fav-title">${b.title}</div><div class="fav-author">${b.author}</div></div>
+      </div>`).join('')}</div>`;
+}
+function renderDlHistory(){
+  document.getElementById('dash-history').innerHTML = downloadHistory.length===0?
+    `<div class="empty-state"><div class="empty-state-icon">📂</div><h3>No downloads yet</h3></div>`:
+    `<div class="dl-list">${downloadHistory.map(item=>{
+      const b=books.find(bk=>bk.id===item.id); if(!b) return '';
+      return `<div class="dl-item">
+        <div class="dl-thumb">${genCover(b,"100%")}</div>
+        <div><div class="dl-title">${b.title}</div><div class="dl-date">Downloaded ${item.date}</div></div>
+        <button class="btn btn-sm btn-primary" onclick="openBookModal(${b.id})" style="margin-left:auto">View</button>
+      </div>`;}).join('')}</div>`;
+}
+
+// ═══════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════
+function showAdminLogin(){
+  document.getElementById('admin-main').innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:center;min-height:80vh">
+      <div style="background:var(--white);border-radius:20px;padding:2.5rem;width:100%;max-width:400px;box-shadow:var(--shadow2)">
+        <div style="text-align:center;margin-bottom:2rem">
+          <div style="width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--amber2),var(--amber));display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto .7rem">📚</div>
+          <h2 style="font-size:1.5rem;margin-bottom:.3rem">Admin Login</h2>
+          <p style="font-size:.87rem;color:var(--slate2)">Sign in to manage your platform</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div><label class="form-label">Email</label><input class="form-input" id="adm-email" type="email" placeholder="admin@mybookhub.com"/></div>
+          <div><label class="form-label">Password</label><input class="form-input" id="adm-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLoginSubmit()"/></div>
+          <div id="adm-err" class="auth-err hidden"></div>
+          <button class="auth-submit" onclick="adminLoginSubmit()">Sign In →</button>
+        </div>
+        <div style="text-align:center;margin-top:1.2rem;padding:.9rem;background:var(--cream);border-radius:9px;font-size:.8rem;color:var(--slate2)">
+          Demo: admin@mybookhub.com / admin123
+        </div>
+      </div>
+    </div>`;
+}
+
+function adminLoginSubmit(){
+  const e=document.getElementById('adm-email').value;
+  const p=document.getElementById('adm-pass').value;
+  if(e==="admin@mybookhub.com"&&p==="admin123"){
+    adminLoggedIn=true;
+    adminTab('overview',document.querySelectorAll('.admin-nav-btn')[0]);
+    toast("Welcome back, Admin! 👋");
+  } else {
+    document.getElementById('adm-err').textContent="Invalid credentials. Try admin@mybookhub.com / admin123";
+    document.getElementById('adm-err').classList.remove('hidden');
+  }
+}
+
+function adminLogout(){
+  adminLoggedIn=false;
+  goPage('home');
+}
+
+function adminTab(tab, btn){
+  if(!adminLoggedIn){showAdminLogin();return;}
+  document.querySelectorAll('.admin-nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+
+  const totalDl = books.reduce((s,b)=>s+b.downloads,0);
+  const totalVw = books.reduce((s,b)=>s+b.views,0);
+  const pubCount = books.filter(b=>b.status==="published").length;
+
+  if(tab==='overview'){
+    document.getElementById('admin-main').innerHTML=`
+      <div class="admin-topbar"><h1 class="admin-page-title">Dashboard Overview</h1>
+        <button class="btn btn-primary btn-sm" onclick="adminTab('add',null);openBookFormModal()">+ Add New Book</button></div>
+      <div class="admin-stat-row">
+        ${[["📚",books.length,"Total Books","All time"],["✅",pubCount,"Published","Live now"],["📥",(totalDl/1000).toFixed(1)+"k","Downloads","+12% month"],["👁️",(totalVw/1000).toFixed(1)+"k","Views","+18% month"]].map(([ic,n,l,t])=>`
+          <div class="admin-stat-card">
+            <div style="font-size:1.4rem;margin-bottom:.5rem">${ic}</div>
+            <div class="admin-stat-n">${n}</div>
+            <div class="admin-stat-l">${l}</div>
+            <div class="admin-stat-t">📈 ${t}</div>
+          </div>`).join('')}
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">Top Performing Books</div>
+        <table class="admin-table">
+          <thead><tr><th>Book</th><th>Category</th><th>Downloads</th><th>Views</th><th>Rating</th><th>Status</th></tr></thead>
+          <tbody>${[...books].sort((a,b)=>b.downloads-a.downloads).slice(0,6).map(b=>`
+            <tr>
+              <td><div class="tbl-title">${b.title}</div><div class="tbl-author">${b.author}</div></td>
+              <td>${b.category}</td>
+              <td>${(b.downloads/1000).toFixed(1)}k</td>
+              <td>${(b.views/1000).toFixed(1)}k</td>
+              <td>${"★".repeat(Math.floor(b.rating))} ${b.rating}</td>
+              <td><span class="status-pill ${b.status==='published'?'s-pub':'s-unpub'}">${b.status}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+  else if(tab==='books'){
+    document.getElementById('admin-main').innerHTML=`
+      <div class="admin-topbar">
+        <h1 class="admin-page-title">Manage Books</h1>
+        <button class="btn btn-primary btn-sm" onclick="openBookFormModal()">+ Add New Book</button>
+      </div>
+      <div class="admin-card">
+        <table class="admin-table">
+          <thead><tr><th>Book</th><th>Category</th><th>Price</th><th>Downloads</th><th>Status</th><th>Featured</th><th>Actions</th></tr></thead>
+          <tbody id="books-table-body"></tbody>
+        </table>
+      </div>`;
+    renderAdminTable();
+  }
+  else if(tab==='add'){
+    openBookFormModal();
+    adminTab('books', document.querySelectorAll('.admin-nav-btn')[1]);
+  }
+  else if(tab==='analytics'){
+    const catCounts = books.reduce((acc,b)=>{acc[b.category]=(acc[b.category]||0)+1;return acc;},{});
+    document.getElementById('admin-main').innerHTML=`
+      <div class="admin-topbar"><h1 class="admin-page-title">Analytics</h1></div>
+      <div class="admin-stat-row">
+        ${[["📥",totalDl.toLocaleString(),"All-Time Downloads"],["👁️",totalVw.toLocaleString(),"All-Time Views"],["⭐",(books.reduce((s,b)=>s+b.rating,0)/books.length).toFixed(1),"Avg Rating"],["🆓",books.filter(b=>b.isFree).length,"Free Books"]].map(([ic,n,l])=>`
+          <div class="admin-stat-card"><div style="font-size:1.4rem;margin-bottom:.5rem">${ic}</div><div class="admin-stat-n">${n}</div><div class="admin-stat-l">${l}</div></div>`).join('')}
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">Category Distribution</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem">
+          ${Object.entries(catCounts).map(([cat,cnt])=>`
+            <div style="padding:.8rem 1rem;background:var(--cream);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:.88rem;font-weight:600">${cat}</span>
+              <span style="background:var(--amber);color:var(--white);padding:.2rem .6rem;border-radius:100px;font-size:.74rem;font-weight:700">${cnt}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">Top Books by Downloads</div>
+        ${[...books].sort((a,b)=>b.downloads-a.downloads).slice(0,5).map((b,i)=>`
+          <div style="display:flex;align-items:center;gap:1rem;padding:.7rem 0;border-bottom:1px solid var(--cream)">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--amber);width:24px;text-align:center">${i+1}</span>
+            <div style="flex:1"><div style="font-weight:600;font-size:.9rem">${b.title}</div><div style="font-size:.79rem;color:var(--slate2)">${b.author}</div></div>
+            <div style="text-align:right"><div style="font-weight:700">${(b.downloads/1000).toFixed(1)}k</div><div style="font-size:.77rem;color:var(--slate2)">downloads</div></div>
+          </div>`).join('')}
+      </div>`;
+  }
+  else if(tab==='settings'){
+    document.getElementById('admin-main').innerHTML=`
+      <div class="admin-topbar"><h1 class="admin-page-title">Platform Settings</h1></div>
+      <div class="admin-card" style="max-width:580px">
+        <div class="form-grid">
+          ${[["Site Name","MyBookHub"],["Admin Email","admin@mybookhub.com"],["Books Per Page","12"],["Default Currency","USD"]].map(([l,v])=>`
+            <div class="form-group">
+              <label class="form-label">${l}</label>
+              <input class="form-input" value="${v}"/>
+            </div>`).join('')}
+          <div class="form-group full">
+            <label class="form-label">Site Description</label>
+            <textarea class="form-input form-textarea">Your premier destination for digital books.</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Allow Registration</label>
+            <select class="form-select"><option>Enabled</option><option>Disabled</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payment Gateway</label>
+            <select class="form-select"><option>Stripe</option><option>PayPal</option><option>None</option></select>
+          </div>
+        </div>
+        <div class="form-actions-row">
+          <button class="btn btn-primary" onclick="toast('Settings saved!','✅')">Save Settings</button>
+        </div>
+      </div>`;
+  }
+}
+
+function renderAdminTable(){
+  const tbody = document.getElementById('books-table-body');
+  if(!tbody) return;
+  tbody.innerHTML = books.map(b=>`
+    <tr>
+      <td><div class="tbl-title">${b.title}</div><div class="tbl-author">${b.author}</div></td>
+      <td>${b.category}</td>
+      <td>${b.isFree?"Free":"$"+b.price}</td>
+      <td>${(b.downloads/1000).toFixed(1)}k</td>
+      <td><span class="status-pill ${b.status==='published'?'s-pub':'s-unpub'}">${b.status}</span></td>
+      <td style="text-align:center">${b.isFeatured?"⭐":"—"}</td>
+      <td><div class="tbl-actions">
+        <button class="act-btn act-edit" onclick="openBookFormModal(${b.id})">Edit</button>
+        <button class="act-btn act-tog" onclick="toggleBookStatus(${b.id})">${b.status==='published'?'Unpublish':'Publish'}</button>
+        <button class="act-btn act-feat" onclick="toggleFeatured(${b.id})">${b.isFeatured?'Unfeature':'Feature'}</button>
+        <button class="act-btn act-del" onclick="deleteBook(${b.id})">Delete</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function toggleBookStatus(id){
+  const b=books.find(x=>x.id===id);
+  if(!b) return;
+  b.status = b.status==='published'?'unpublished':'published';
+  renderAdminTable();
+  toast(b.status==='published'?'Book published!':'Book unpublished','📢');
+}
+function toggleFeatured(id){
+  books.forEach(b=>{ if(b.id===id) b.isFeatured=!b.isFeatured; else b.isFeatured=false; });
+  renderAdminTable();
+  toast("Featured status updated ⭐");
+}
+function deleteBook(id){
+  if(!confirm("Delete this book permanently?")) return;
+  books = books.filter(b=>b.id!==id);
+  renderAdminTable();
+  toast("Book deleted","🗑️");
+}
+
+// ═══════════════════════════════════
+// BOOK FORM MODAL (ADD / EDIT)
+// ═══════════════════════════════════
+function openBookFormModal(id=null){
+  editingBookId=id;
+  const b = id ? books.find(x=>x.id===id) : null;
+  document.getElementById('form-modal-title').textContent = b?"Edit Book":"Add New Book";
+
+  document.getElementById('form-modal-body').innerHTML=`
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Book Title *</label>
+        <input class="form-input" id="f-title" placeholder="Enter book title" value="${b?b.title:''}"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Author Name *</label>
+        <input class="form-input" id="f-author" placeholder="Author's full name" value="${b?b.author:''}"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select" id="f-cat">
+          ${CATEGORIES.filter(c=>c!=="All").map(c=>`<option ${b&&b.category===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Number of Pages</label>
+        <input class="form-input" id="f-pages" type="number" placeholder="e.g. 320" value="${b?b.pages:200}"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Description</label>
+        <textarea class="form-input form-textarea" id="f-desc" placeholder="Write a compelling description…">${b?b.description:''}</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pricing</label>
+        <select class="form-select" id="f-free" onchange="togglePriceField()">
+          <option value="1" ${b&&b.isFree?'selected':''}>Free</option>
+          <option value="0" ${b&&!b.isFree?'selected':''}>Paid</option>
+        </select>
+      </div>
+      <div class="form-group" id="f-price-group" style="${b&&!b.isFree?'':'display:none'}">
+        <label class="form-label">Price (USD)</label>
+        <input class="form-input" id="f-price" type="number" step=".01" placeholder="9.99" value="${b&&b.price?b.price:''}"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="f-status">
+          <option value="published" ${!b||b.status==='published'?'selected':''}>Published</option>
+          <option value="unpublished" ${b&&b.status==='unpublished'?'selected':''}>Draft / Unpublished</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cover Color Theme</label>
+        <select class="form-select" id="f-color">
+          ${COVER_COLORS.map((c,i)=>`<option value="${i}" ${b&&b.color===i?'selected':''}>Theme ${i+1}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Book Cover Image</label>
+        <div class="upload-zone" onclick="toast('File upload coming soon!','📁')">
+          <div class="upload-zone-icon">🖼️</div>
+          <div class="upload-zone-txt">Click to upload cover (JPEG, PNG)<br/><small>Recommended: 400×600px</small></div>
+        </div>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Book File (PDF / EPUB)</label>
+        <div class="upload-zone" onclick="toast('File upload coming soon!','📄')">
+          <div class="upload-zone-icon">📄</div>
+          <div class="upload-zone-txt">Click to upload book file<br/><small>Supports PDF, EPUB — max 50MB</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions-row">
+      <button class="btn-cancel-form" onclick="closeModal('form-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBookForm()">${b?'💾 Save Changes':'🚀 Publish Book'}</button>
+    </div>`;
+
+  openModal('form-modal');
+}
+
+function togglePriceField(){
+  const isFree = document.getElementById('f-free').value==="1";
+  document.getElementById('f-price-group').style.display = isFree?'none':'';
+}
+
+function saveBookForm(){
+  const title = document.getElementById('f-title').value.trim();
+  const author = document.getElementById('f-author').value.trim();
+  if(!title||!author){ toast("Title and Author are required!","⚠️"); return; }
+
+  const newData = {
+    title, author,
+    category: document.getElementById('f-cat').value,
+    description: document.getElementById('f-desc').value.trim(),
+    pages: parseInt(document.getElementById('f-pages').value)||200,
+    isFree: document.getElementById('f-free').value==="1",
+    price: parseFloat(document.getElementById('f-price')?.value)||0,
+    status: document.getElementById('f-status').value,
+    color: parseInt(document.getElementById('f-color').value)||0,
+  };
+
+  if(editingBookId){
+    const b=books.find(x=>x.id===editingBookId);
+    Object.assign(b,newData);
+    toast("Book updated successfully! ✅","✅");
+  } else {
+    books.unshift({...newData,id:Date.now(),downloads:0,views:0,rating:0,reviews:[],isFeatured:false,published:new Date().toISOString().split('T')[0]});
+    toast("Book published! 🚀","🚀");
+  }
+  closeModal('form-modal');
+  renderAdminTable();
+}
+
+// ═══════════════════════════════════
+// MOBILE NAV
+// ═══════════════════════════════════
+function toggleMobileNav(){
+  const links = document.getElementById('nav-links');
+  links.style.display = links.style.display==='flex'?'none':'flex';
+  links.style.flexDirection='column';
+  links.style.position='absolute';
+  links.style.top='66px';
+  links.style.left='0';
+  links.style.right='0';
+  links.style.background='rgba(17,13,7,.98)';
+  links.style.padding='1rem';
+  links.style.zIndex='400';
+}
+
+// ═══════════════════════════════════
+// KEYBOARD
+// ═══════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    closeModal('book-modal');
+    closeModal('form-modal');
+    closeViewer();
+  }
+});
+
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
+renderFeatured();
+renderCatPills();
+renderBooks();
+</script>
+</body>
+</html>
